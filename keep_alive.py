@@ -42,30 +42,30 @@ def check_app(url):
             print(f"Attempt {attempt + 1} for [{app_id}]: {url}")
             driver.get(url)
             
-            # Allow initial asset handshake
-            time.sleep(8)
+            # Allow time for initial network connection
+            time.sleep(6)
             
-            # --- CHECK FOR STREAMLIT HIBERNATION WAKE-UP BUTTON ---
+            # --- 1. HANDLE WAKE-UP BUTTON IF ASLEEP ---
             try:
-                wake_buttons = driver.find_elements(By.XPATH, "//button[contains(., 'Yes, get this app back up') or contains(., 'Get this app back up')]")
+                wake_buttons = driver.find_elements(
+                    By.XPATH, 
+                    "//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'back up') "
+                    "or contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'wake')]"
+                )
                 if wake_buttons:
                     print(f"⚠️ [{app_id}] is sleeping. Clicking wake-up button...")
                     wake_buttons[0].click()
-                    time.sleep(15)  # Wait for container spin-up
+                    time.sleep(15)  # Allow container cold-start spin-up
             except Exception:
                 pass
             
-            # --- WAIT FOR STREAMLIT DOM TO MOUNT ---
-            WebDriverWait(driver, 45).until(
+            # --- 2. VERIFY CORE APP RENDER ---
+            # Wait for either the guide title, the portfolio welcome title, or an h1/h2 element
+            WebDriverWait(driver, 35).until(
                 EC.presence_of_element_located((
-                    By.CSS_SELECTOR, 
-                    "[data-testid='stAppViewContainer'], .stApp, .nav-container, h1"
+                    By.XPATH, 
+                    "//*[contains(text(), 'Knowledge Repository') or contains(text(), 'Analyst Hub') or contains(text(), 'Welcome') or self::h1 or self::h2]"
                 ))
-            )
-            
-            # Ensure text rendered on the canvas
-            WebDriverWait(driver, 15).until(
-                lambda d: len(d.find_element(By.TAG_NAME, "body").text.strip()) > 50
             )
             
             load_time = round(time.time() - start_time, 2)
