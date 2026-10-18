@@ -10,8 +10,19 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
+if len(sys.argv) < 2:
+    print("Error: Target URL argument missing.")
+    sys.exit(1)
+
 target_url = sys.argv[1]
-app_id = "portfolio" if "portfolio" in target_url else "guide"
+
+# Explicit identification for logging
+if "analyst-reference-guide" in target_url:
+    app_id = "guide"
+elif "professional-portfolio" in target_url or "portfolio" in target_url:
+    app_id = "portfolio"
+else:
+    app_id = "app"
 
 options = Options()
 options.add_argument("--headless=new")
@@ -28,24 +39,23 @@ def check_app(url):
     
     for attempt in range(3):
         try:
-            print(f"Attempt {attempt + 1} for: {url}")
+            print(f"Attempt {attempt + 1} for [{app_id}]: {url}")
             driver.get(url)
             
-            # Allow initial load
+            # Allow initial asset handshake
             time.sleep(8)
             
             # --- CHECK FOR STREAMLIT HIBERNATION WAKE-UP BUTTON ---
             try:
                 wake_buttons = driver.find_elements(By.XPATH, "//button[contains(., 'Yes, get this app back up') or contains(., 'Get this app back up')]")
                 if wake_buttons:
-                    print("⚠️ App is sleeping. Clicking wake-up button...")
+                    print(f"⚠️ [{app_id}] is sleeping. Clicking wake-up button...")
                     wake_buttons[0].click()
                     time.sleep(15)  # Wait for container spin-up
             except Exception:
                 pass
             
-            # --- WAIT FOR APP TO RENDER ---
-            # Wait for either the core Streamlit container OR the custom card container
+            # --- WAIT FOR STREAMLIT DOM TO MOUNT ---
             WebDriverWait(driver, 45).until(
                 EC.presence_of_element_located((
                     By.CSS_SELECTOR, 
@@ -53,7 +63,7 @@ def check_app(url):
                 ))
             )
             
-            # Secondary check: ensure DOM body has actual loaded text
+            # Ensure text rendered on the canvas
             WebDriverWait(driver, 15).until(
                 lambda d: len(d.find_element(By.TAG_NAME, "body").text.strip()) > 50
             )
@@ -62,7 +72,7 @@ def check_app(url):
             return load_time, "Success"
             
         except Exception as e:
-            print(f"Attempt {attempt + 1} failed. Details: {str(e)[:120]}")
+            print(f"Attempt {attempt + 1} for [{app_id}] failed. Details: {str(e)[:120]}")
             if attempt == 2:
                 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
                 error_filename = f"error_{app_id}_{timestamp}.png"
@@ -81,9 +91,9 @@ try:
         csv.writer(f).writerow([datetime.now().strftime("%Y-%m-%d %H:%M:%S"), app_id, duration, status])
         
     if status == "Success":
-        print(f"✅ {app_id} is LIVE ({duration}s)")
+        print(f"✅ [{app_id}] is LIVE ({duration}s)")
     else:
-        print(f"❌ {app_id} FAILED - Check the error screenshot in the repo!")
+        print(f"❌ [{app_id}] FAILED - Check error screenshot in repo if generated.")
         sys.exit(1)
 finally:
     driver.quit()
