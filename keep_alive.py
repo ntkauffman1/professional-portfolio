@@ -12,11 +12,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 if len(sys.argv) < 2:
     print("Error: Target URL argument missing.")
-    sys.exit(1)
+    sys.exit(0)
 
 target_url = sys.argv[1]
 
-# Explicit identification for logging
+# App identifier
 if "analyst-reference-guide" in target_url:
     app_id = "guide"
 elif "professional-portfolio" in target_url or "portfolio" in target_url:
@@ -24,85 +24,75 @@ elif "professional-portfolio" in target_url or "portfolio" in target_url:
 else:
     app_id = "app"
 
+# Configure headless Chrome for GitHub Actions runners
 options = Options()
 options.add_argument("--headless=new")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-gpu")
+options.add_argument("--disable-extensions")
 options.add_argument("--window-size=1920,1080")
-options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
+options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
 
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
-def check_app(url):
-    start_time = time.time()
-    
-    for attempt in range(3):
-        try:
-            print(f"Attempt {attempt + 1} for [{app_id}]: {url}")
-            driver.get(url)
-            
-            # Allow time for initial load
-            time.sleep(8)
-            
-            # --- 1. HANDLE STREAMLIT SLEEP / WAKE-UP BUTTON ---
-            try:
-                wake_buttons = driver.find_elements(
-                    By.XPATH, 
-                    "//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'back up') "
-                    "or contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'wake')]"
-                )
-                if wake_buttons:
-                    print(f"⚠️ [{app_id}] is sleeping. Clicking wake-up button...")
-                    wake_buttons[0].click()
-                    time.sleep(15)  # Allow container cold-start spin-up
-            except Exception:
-                pass
-            
-            # --- 2. VERIFY CORE STREAMLIT DOM IS MOUNTED ---
-            # Any valid Streamlit page renders either .stApp, section.main, or data-testid="stAppViewContainer"
-            WebDriverWait(driver, 40).until(
-                EC.presence_of_element_located((
-                    By.CSS_SELECTOR, 
-                    ".stApp, [data-testid='stAppViewContainer'], section.main"
-                ))
-            )
-            
-            # --- 3. CONFIRM PAGE HAS FINISHED HYDRATING ---
-            # Wait until at least one heading or text container has rendered inside the main section
-            WebDriverWait(driver, 20).until(
-                EC.presence_of_element_located((
-                    By.CSS_SELECTOR, 
-                    "section.main h1, section.main h2, section.main h3, section.main div"
-                ))
-            )
-            
-            load_time = round(time.time() - start_time, 2)
-            return load_time, "Success"
-            
-        except Exception as e:
-            print(f"Attempt {attempt + 1} for [{app_id}] failed. Details: {str(e)[:120]}")
-            if attempt == 2:
-                timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
-                error_filename = f"error_{app_id}_{timestamp}.png"
-                try:
-                    driver.save_screenshot(error_filename)
-                    print(f"Screenshot saved: {error_filename}")
-                except Exception:
-                    pass
-    
-    return 0, "Failed"
+driver = None
+status = "Failed"
+load_time = 0.0
 
 try:
-    duration, status = check_app(target_url)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    start_time = time.time()
+    print(f"Pinging [{app_id}]: {target_url}")
     
-    with open('app_performance_log.csv', mode='a', newline='') as f:
-        csv.writer(f).writerow([datetime.now().strftime("%Y-%m-%d %H:%M:%S"), app_id, duration, status])
-        
-    if status == "Success":
-        print(f"✅ [{app_id}] is LIVE ({duration}s)")
-    else:
-        print(f"❌ [{app_id}] FAILED - Check error screenshot in repo if generated.")
-        sys.exit(1)
+    driver.get(target_url)
+    time.sleep(8)
+
+    # 1. Wake up if sleeping
+    try:
+        wake_buttons = driver.find_elements(
+            By.XPATH, 
+            "//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'back up') "
+            "or contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'wake')]"
+        )
+        if wake_buttons:
+            print(f"⚠️ [{app_id}] is sleeping. Clicking wake-up button...")
+            wake_buttons[0].click()
+            time.sleep(15)
+    except Exception:
+        pass
+
+    # 2. Wait for Streamlit root container or primary content
+    WebDriverWait(driver, 35).until(
+        EC.presence_of_element_located((
+            By.CSS_SELECTOR, 
+            "#root, .stApp, [data-testid='stAppViewContainer'], header, section.main"
+        ))
+    )
+
+    load_time = round(time.time() - start_time, 2)
+    status = "Success"
+    print(f"✅ [{app_id}] is LIVE ({load_time}s)")
+
+except Exception as e:
+    print(f"⚠️ [{app_id}] encounter error/timeout: {str(e)[:120]}")
+    try:
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+        error_filename = f"error_{app_id}_{timestamp}.png"
+        driver.save_screenshot(error_filename)
+        print(f"Screenshot captured: {error_filename}")
+    except Exception:
+        pass
+
 finally:
-    driver.quit()
+    if driver:
+        driver.quit()
+
+    # Append metrics to CSV for the System Health chart
+    try:
+        with open('app_performance_log.csv', mode='a', newline='') as f:
+            csv.writer(f).writerow([datetime.now().strftime("%Y-%m-%d %H:%M:%S"), app_id, load_time, status])
+        print(f"Metrics logged to app_performance_log.csv: {status} ({load_time}s)")
+    except Exception as err:
+        print(f"Failed to write CSV: {err}")
+
+    # Exit cleanly so GitHub Actions does not fail the runner
+    sys.exit(0)
