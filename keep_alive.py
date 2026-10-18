@@ -42,10 +42,10 @@ def check_app(url):
             print(f"Attempt {attempt + 1} for [{app_id}]: {url}")
             driver.get(url)
             
-            # Allow time for initial network connection
-            time.sleep(6)
+            # Allow time for initial load
+            time.sleep(8)
             
-            # --- 1. HANDLE WAKE-UP BUTTON IF ASLEEP ---
+            # --- 1. HANDLE STREAMLIT SLEEP / WAKE-UP BUTTON ---
             try:
                 wake_buttons = driver.find_elements(
                     By.XPATH, 
@@ -59,12 +59,21 @@ def check_app(url):
             except Exception:
                 pass
             
-            # --- 2. VERIFY CORE APP RENDER ---
-            # Wait for either the guide title, the portfolio welcome title, or an h1/h2 element
-            WebDriverWait(driver, 35).until(
+            # --- 2. VERIFY CORE STREAMLIT DOM IS MOUNTED ---
+            # Any valid Streamlit page renders either .stApp, section.main, or data-testid="stAppViewContainer"
+            WebDriverWait(driver, 40).until(
                 EC.presence_of_element_located((
-                    By.XPATH, 
-                    "//*[contains(text(), 'Knowledge Repository') or contains(text(), 'Analyst Hub') or contains(text(), 'Welcome') or self::h1 or self::h2]"
+                    By.CSS_SELECTOR, 
+                    ".stApp, [data-testid='stAppViewContainer'], section.main"
+                ))
+            )
+            
+            # --- 3. CONFIRM PAGE HAS FINISHED HYDRATING ---
+            # Wait until at least one heading or text container has rendered inside the main section
+            WebDriverWait(driver, 20).until(
+                EC.presence_of_element_located((
+                    By.CSS_SELECTOR, 
+                    "section.main h1, section.main h2, section.main h3, section.main div"
                 ))
             )
             
