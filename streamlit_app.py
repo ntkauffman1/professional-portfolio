@@ -1075,62 +1075,55 @@ elif page == "Systems Analysis & Architecture":
 
         sequence_dot = """
         digraph SequenceDiagram {
-            graph [rankdir=TB, bgcolor="transparent", pad="0.2", nodesep="0.6", ranksep="0.4"];
+            graph [rankdir=TB, bgcolor="transparent", pad="0.2", nodesep="1.2", ranksep="0.5"];
             node [fontname="Helvetica", fontsize=11, fontcolor="#f0f2f6", style="filled", penwidth=1.5];
             edge [fontname="Helvetica", fontsize=9, fontcolor="#00a8ff", color="#808495", arrowsize=0.75];
 
-            // Entity Lifeline Headers (Top Row)
-            subgraph cluster_header {
-                style=invis;
-                Salesperson [label="Actor: Salesperson", shape=box, fillcolor="#262730", color="#4e5361", width=1.8];
-                OrderSystem [label="Boundary / Controller:\\nOrder System", shape=box, fillcolor="#1e2c38", color="#00a8ff", width=2.0];
-                Gateway     [label="External Service:\\nCredit Card Gateway", shape=box, fillcolor="#3a1c22", color="#ff4b4b", width=2.0];
-                Database    [label="Persistence Tier:\\nPostgreSQL 3NF DB", shape=cylinder, fillcolor="#1e3427", color="#2ecc71", width=2.0];
-            }
+            // 1. LIFELINE HEADERS (Top Row)
+            node [shape=box, width=2.2, height=0.6];
+            S0 [label="Actor:\\nSalesperson", fillcolor="#262730", color="#4e5361"];
+            O0 [label="Boundary / Controller:\\nOrder System", fillcolor="#1e2c38", color="#00a8ff"];
+            G0 [label="External Service:\\nCredit Card Gateway", fillcolor="#3a1c22", color="#ff4b4b"];
+            D0 [label="Persistence Tier:\\nPostgreSQL 3NF DB", shape=cylinder, fillcolor="#1e3427", color="#2ecc71"];
 
-            // Lifeline Activation Nodes
-            s1 [shape=point, width=0.01, style=invis];
-            o1 [shape=point, width=0.01, style=invis];
-            g1 [shape=point, width=0.01, style=invis];
-            g2 [shape=point, width=0.01, style=invis];
-            o2 [shape=point, width=0.01, style=invis];
-            d1 [shape=point, width=0.01, style=invis];
-            d2 [shape=point, width=0.01, style=invis];
-            o3 [shape=point, width=0.01, style=invis];
-            s2 [shape=point, width=0.01, style=invis];
+            // 2. ENFORCE LEFT-TO-RIGHT COLUMN ORDER
+            { rank=same; S0; O0; G0; D0; }
+            edge [style=invis, weight=1000];
+            S0 -> O0 -> G0 -> D0;
 
-            // Vertical Lifelines (Downwards)
-            Salesperson -> s1 [style=dashed, color="#4e5361", arrowhead=none, weight=10];
-            s1 -> s2 [style=dashed, color="#4e5361", arrowhead=none, weight=10];
+            // 3. INVISIBLE GRID POINTS FOR LIFELINES
+            node [shape=point, width=0, height=0, style=invis];
 
-            OrderSystem -> o1 [style=dashed, color="#00a8ff", arrowhead=none, weight=10];
-            o1 -> o2 [style=dashed, color="#00a8ff", arrowhead=none, weight=10];
-            o2 -> o3 [style=dashed, color="#00a8ff", arrowhead=none, weight=10];
+            // 4. VERTICAL LIFELINES (weight=1000 forces them perfectly straight down)
+            edge [style=dashed, arrowhead=none, weight=1000, penwidth=1.5];
+            S0 -> S1 -> S2 -> S3 -> S4 -> S5 -> S6 -> S7 [color="#4e5361"];
+            O0 -> O1 -> O2 -> O3 -> O4 -> O5 -> O6 -> O7 [color="#00a8ff"];
+            G0 -> G1 -> G2 -> G3 -> G4 -> G5 -> G6 -> G7 [color="#ff4b4b"];
+            D0 -> D1 -> D2 -> D3 -> D4 -> D5 -> D6 -> D7 [color="#2ecc71"];
 
-            Gateway -> g1 [style=dashed, color="#ff4b4b", arrowhead=none, weight=10];
-            g1 -> g2 [style=dashed, color="#ff4b4b", arrowhead=none, weight=10];
+            // 5. ENFORCE HORIZONTAL ROWS (Time Steps)
+            { rank=same; S1; O1; G1; D1; }
+            { rank=same; S2; O2; G2; D2; }
+            { rank=same; S3; O3; G3; D3; }
+            { rank=same; S4; O4; G4; D4; }
+            { rank=same; S5; O5; G5; D5; }
+            { rank=same; S6; O6; G6; D6; }
+            { rank=same; S7; O7; G7; D7; }
 
-            Database -> d1 [style=dashed, color="#2ecc71", arrowhead=none, weight=10];
-            d1 -> d2 [style=dashed, color="#2ecc71", arrowhead=none, weight=10];
+            // 6. MESSAGES (constraint=false prevents them from distorting the grid)
+            edge [style=solid, arrowhead=normal, weight=0, constraint=false, penwidth=1.5];
 
-            // Sequence Invocations (Horizontal Ranks)
-            { rank=same; s1; o1; }
-            s1 -> o1 [label=" 1: submitSale(orderPayload)", color="#00a8ff", fontcolor="#00a8ff", penwidth=1.5];
+            S1 -> O1 [label=" 1: submitSale(orderPayload)", color="#00a8ff", fontcolor="#00a8ff"];
 
-            { rank=same; o1; g1; }
-            o1 -> g1 [label=" 2: validatePayment(cardToken, total)", color="#ff4b4b", fontcolor="#ff4b4b", penwidth=1.5];
+            O2 -> G2 [label=" 2: validatePayment(cardToken, total)", color="#ff4b4b", fontcolor="#ff4b4b"];
 
-            { rank=same; g2; o2; }
-            g2 -> o2 [label=" 3: return [Approved / Denied]", style=dashed, color="#a0aab2", fontcolor="#a0aab2"];
+            G3 -> O3 [label=" 3: return [Approved / Denied]", style=dashed, color="#a0aab2", fontcolor="#a0aab2"];
 
-            { rank=same; o2; d1; }
-            o2 -> d1 [label=" 4: finalizeOrder(salesRecord, status='PAID')", color="#2ecc71", fontcolor="#2ecc71", penwidth=1.5];
+            O4 -> D4 [label=" 4: finalizeOrder(salesRecord, status='PAID')", color="#2ecc71", fontcolor="#2ecc71"];
 
-            { rank=same; d2; o3; }
-            d2 -> o3 [label=" 5: commitConfirmation(order_id)", style=dashed, color="#a0aab2", fontcolor="#a0aab2"];
+            D5 -> O5 [label=" 5: commitConfirmation(order_id)", style=dashed, color="#a0aab2", fontcolor="#a0aab2"];
 
-            { rank=same; o3; s2; }
-            o3 -> s2 [label=" 6: returnReceipt(invoiceToken)", style=dashed, color="#00a8ff", fontcolor="#00a8ff"];
+            O6 -> S6 [label=" 6: returnReceipt(invoiceToken)", style=dashed, color="#00a8ff", fontcolor="#00a8ff"];
         }
         """
         st.graphviz_chart(sequence_dot, use_container_width=True)
