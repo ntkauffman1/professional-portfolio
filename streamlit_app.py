@@ -930,56 +930,111 @@ elif page == "Systems Analysis & Architecture":
         st.header("2. Process Decomposition & Data Flow Diagrams (DFD)")
 
         col_dfd_l, col_dfd_r = st.columns(2)
+        # ----------------- LEFT COLUMN: CONTEXT LEVEL 0 -----------------
         with col_dfd_l:
-            st.markdown("#### Context Diagram (Level 0 - Legacy)")
-            st.code("""
-[ Customer ] ──( Order & Payment )──▶ [ 0: Order Spreadsheet ]
-                                             │
-      ┌────────────────┬─────────────────────┼────────────────────┐
-      ▼                ▼                     ▼                    ▼
-[ Receipt ]     [ Shipping Ticket ]    [ Card Deposits ]   [ Sales Report ]
-      │                │                     │                    │
-[ Customer ]     [ Shipping ]             [ Bank ]          [ Accounting ]
-            """, language="text")
+            st.subheader("Context Diagram (Level 0 - Legacy)")
             st.caption("Legacy State: A central spreadsheet acts as a manual bottleneck across all functions.")
 
+            context_dot = """
+            digraph ContextDiagram {
+                graph [rankdir=LR, bgcolor="transparent", pad="0.2", nodesep="0.4", ranksep="0.5"];
+                node [fontname="Helvetica", fontsize=11, fontcolor="#f0f2f6", style="filled", penwidth=1.5];
+                edge [fontname="Helvetica", fontsize=9, fontcolor="#a0aab2", color="#808495", arrowsize=0.75];
+
+                // External Entities (Square Blocks)
+                Customer [label="Customer", shape=box, fillcolor="#262730", color="#4e5361", width=1.3, height=0.6];
+                Bank [label="Bank", shape=box, fillcolor="#262730", color="#4e5361", width=1.3, height=0.6];
+                Shipping [label="Shipping", shape=box, fillcolor="#262730", color="#4e5361", width=1.3, height=0.6];
+                Accounting [label="Accounting", shape=box, fillcolor="#262730", color="#4e5361", width=1.3, height=0.6];
+
+                // Central Process / Legacy Store (Rounded Red Accent)
+                Spreadsheet [label="0\\nOrder Spreadsheet\\n(Legacy System)", shape=circle, fillcolor="#3a1c22", color="#ff4b4b", width=1.6, height=1.6, penwidth=2];
+
+                // Data Flows
+                Customer -> Spreadsheet [label=" Order &\\nPayment"];
+                Spreadsheet -> Customer [label=" Receipt"];
+                Spreadsheet -> Shipping [label=" Shipping\\nTicket"];
+                Spreadsheet -> Bank [label=" Card\\nDeposits"];
+                Spreadsheet -> Accounting [label=" Sales\\nReport"];
+            }
+            """
+            st.graphviz_chart(context_dot, use_container_width=True)
+
+        # ----------------- RIGHT COLUMN: DIAGRAM 0 -----------------
         with col_dfd_r:
-            st.markdown("#### Diagram 0 (Proposed Modular System)")
-            st.code("""
-[ Customer ] ──( Order & Payment )──▶ [ 1.0: Log Sale ] ──▶ [ Bank ]
-                                             │ (Sales Record)
-                                             ▼
-                                     [( D1: Orders Store )]
-                                       │              │
-                     ┌─────────────────┘              └──────────────────┐
-                     ▼                                                   ▼
-            [ 2.0: Ship Product ]                              [ 3.0: Produce Report ]
-                     │ (Shipping Request)                                │
-                     ▼                                                   ▼
-               [ Shipping ]                                       [ Accounting ]
-            """, language="text")
+            st.subheader("Diagram 0 (Proposed Modular System)")
             st.caption("Target State: Isolated functional modules reading/writing to a centralized data store.")
+
+            diagram0_dot = """
+            digraph Diagram0 {
+                graph [rankdir=TB, bgcolor="transparent", pad="0.2", nodesep="0.3", ranksep="0.45"];
+                node [fontname="Helvetica", fontsize=11, fontcolor="#f0f2f6", style="filled", penwidth=1.5];
+                edge [fontname="Helvetica", fontsize=9, fontcolor="#a0aab2", color="#808495", arrowsize=0.75];
+
+                // External Entities (Top/Bottom Row)
+                Customer [label="Customer", shape=box, fillcolor="#262730", color="#4e5361", width=1.2, height=0.5];
+                Bank [label="Bank", shape=box, fillcolor="#262730", color="#4e5361", width=1.2, height=0.5];
+                Shipping [label="Shipping", shape=box, fillcolor="#262730", color="#4e5361", width=1.2, height=0.5];
+                Accounting [label="Accounting", shape=box, fillcolor="#262730", color="#4e5361", width=1.2, height=0.5];
+
+                // Core Processes (Rounded Pills)
+                P1 [label="1.0\\nLog Sale", shape=ellipse, fillcolor="#1e2c38", color="#00a8ff", width=1.3, height=0.7];
+                P2 [label="2.0\\nShip Product", shape=ellipse, fillcolor="#1e2c38", color="#00a8ff", width=1.3, height=0.7];
+                P3 [label="3.0\\nProduce Report", shape=ellipse, fillcolor="#1e2c38", color="#00a8ff", width=1.3, height=0.7];
+                P4 [label="4.0\\nCheck Status", shape=ellipse, fillcolor="#1e2c38", color="#00a8ff", width=1.3, height=0.7];
+
+                // Centralized Data Store (Cylinder / Database)
+                D1 [label="D1: Orders Store\\n(PostgreSQL 3NF)", shape=cylinder, fillcolor="#1e3427", color="#2ecc71", width=2.0, height=0.9, penwidth=2];
+
+                // Data Flow Arrows
+                Customer -> P1 [label=" Order & Pay"];
+                P1 -> Customer [label=" Receipt"];
+                P1 -> Bank [label=" Auth"];
+                P1 -> D1 [label=" Sales Record"];
+
+                D1 -> P2 [label=" Paid Orders"];
+                P2 -> Shipping [label=" Shipping Req"];
+                Shipping -> P2 [label=" Tracking"];
+                P2 -> D1 [label=" Status -> Shipped"];
+
+                D1 -> P3 [label=" Sales Records"];
+                P3 -> Accounting [label=" Weekly Report"];
+
+                Customer -> P4 [label=" Order ID"];
+                D1 -> P4 [label=" Status Query"];
+                P4 -> Customer [label=" Status Update"];
+            }
+            """
+            st.graphviz_chart(diagram0_dot, use_container_width=True)
 
         st.markdown("---")
         st.markdown("#### Level 1 DFD Explosion Workflows")
 
         exp_col1, exp_col2 = st.columns(2)
         with exp_col1:
-            st.markdown("**Process 1.0: Log Sale (Explosion)**")
             st.markdown("""
-            1. **1.1 Capture Sales Data:** Receive item, customer, and payment payload.
-            2. **1.2 Validate Payment:** Transmit authorization request to Bank API; evaluate status.
-            3. **1.3 Update Orders Database:** Write confirmed `SALES RECORD` into transactional storage.
-            4. **1.4 Generate Customer Receipt:** Produce transaction confirmation and push receipt to Customer.
-            """)
+            <div style="background-color: var(--secondary-background-color, #1e2530); padding: 18px; border-radius: 10px; border-left: 4px solid #00a8ff; margin-bottom: 12px;">
+                <h4 style="margin: 0 0 8px 0; color: #00a8ff;">Process 1.0: Log Sale (Explosion)</h4>
+                <ol style="margin: 0; padding-left: 20px; font-size: 0.92rem; line-height: 1.5;">
+                    <li><strong>1.1 Capture Sales Data:</strong> Receive item, customer, and payment payload.</li>
+                    <li><strong>1.2 Validate Payment:</strong> Transmit authorization request to Bank API; evaluate response.</li>
+                    <li><strong>1.3 Update Orders Database:</strong> Commit validated <code>SALES RECORD</code> into transactional storage.</li>
+                    <li><strong>1.4 Generate Customer Receipt:</strong> Emit payment token confirmation and push receipt to customer.</li>
+                </ol>
+            </div>
+            """, unsafe_allow_html=True)
 
         with exp_col2:
-            st.markdown("**Process 2.0: Ship Product (Explosion)**")
             st.markdown("""
-            1. **2.1 Verify Order Readiness:** Poll `Orders Store` for valid, paid transactions.
-            2. **2.2 Generate Shipping Label:** Query carrier API (USPS/UPS); capture tracking token.
-            3. **2.3 Update Shipping Status:** Mutate database status to `Shipped` and trigger tracking notifications.
-            """)
+            <div style="background-color: var(--secondary-background-color, #1e2530); padding: 18px; border-radius: 10px; border-left: 4px solid #2ecc71; margin-bottom: 12px;">
+                <h4 style="margin: 0 0 8px 0; color: #2ecc71;">Process 2.0: Ship Product (Explosion)</h4>
+                <ol style="margin: 0; padding-left: 20px; font-size: 0.92rem; line-height: 1.5;">
+                    <li><strong>2.1 Verify Order Readiness:</strong> Poll <code>Orders Store</code> for validated, paid transactions.</li>
+                    <li><strong>2.2 Generate Shipping Label:</strong> Query carrier API (USPS/UPS); retrieve and link tracking token.</li>
+                    <li><strong>2.3 Update Shipping Status:</strong> Mutate order record to <code>Shipped</code> and dispatch tracking confirmation.</li>
+                </ol>
+            </div>
+            """, unsafe_allow_html=True)
 
     with tab_sa3:
         st.header("3. UML Behavioral Diagrams & System Logic")
@@ -1128,3 +1183,4 @@ elif page == "Reference Guide":
     
     # A professional button to open the app in a new tab
     st.link_button("Launch Full Reference Guide App ↗️", "https://analyst-reference-guide-ntkauffman1.streamlit.app/", type="primary", use_container_width=True)
+
