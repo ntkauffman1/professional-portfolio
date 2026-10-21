@@ -1039,35 +1039,112 @@ elif page == "Systems Analysis & Architecture":
     with tab_sa3:
         st.header("3. UML Behavioral Diagrams & System Logic")
 
-        st.markdown("#### Formal Decision Table: Fulfillment Dispatch Criteria")
+        # ----------------- PART A: FORMAL DECISION TABLE -----------------
+        st.subheader("Formal Decision Table: Fulfillment Dispatch Criteria")
+        st.caption("Deterministic evaluation logic governing order fulfillment and exception routing.")
+
         decision_data = {
-            "Condition / Action": [
-                "Condition: Sale is Logged?",
-                "Condition: Payment Received & Approved?",
-                "Condition: Shipping Label Created?",
-                "Action: Ship Product",
-                "Action: Hold / Do Not Ship"
+            "Rule Identifier": [
+                "Rule 1 (Happy Path)",
+                "Rule 2 (Label Failure)",
+                "Rule 3 (Payment Failure)"
             ],
-            "Rule 1 (Happy Path)": ["Y", "Y", "Y", "✅ EXECUTE", "—"],
-            "Rule 2 (Label Failure)": ["Y", "Y", "N", "—", "🛑 HOLD (Label Retry)"],
-            "Rule 3 (Payment Failure)": ["Y", "N", "—", "—", "🛑 HOLD (Payment Denied)"]
+            "Condition: Sale Logged?": ["✅ Yes", "✅ Yes", "✅ Yes"],
+            "Condition: Payment Approved?": ["✅ Yes", "✅ Yes", "❌ No"],
+            "Condition: Shipping Label Created?": ["✅ Yes", "❌ No", "— (Bypassed)"],
+            "Action: Ship Product": ["🟢 EXECUTE DISPATCH", "—", "—"],
+            "Action: Exception Handling": [
+                "—",
+                "🟡 HOLD: Label Generation Retry",
+                "🔴 HOLD: Payment Denied / Cancel"
+            ]
         }
-        st.table(pd.DataFrame(decision_data))
+        df_decision = pd.DataFrame(decision_data)
+
+        st.dataframe(
+            df_decision,
+            use_container_width=True,
+            hide_index=True
+        )
 
         st.markdown("---")
-        st.markdown("#### UML Sequence Architecture: Order Authorization")
-        st.code("""
-Salesperson           Order System              Credit Card Gateway         Database
-    │                      │                             │                     │
-    ├─── submitSale() ────▶│                             │                     │
-    │                      ├─── validatePayment() ──────▶│                     │
-    │                      │◀── Approved / Denied ───────┤                     │
-    │                      │                                                   │
-    │                      ├─── finalizeOrder() ──────────────────────────────▶│
-    │                      │◀── Write Success ─────────────────────────────────┤
-    │                      │                                                   │
-    │◀── Return Receipt ───┤                                                   │
-        """, language="text")
+
+        # ----------------- PART B: UML SEQUENCE ARCHITECTURE -----------------
+        st.subheader("UML Sequence Architecture: Order Authorization Flow")
+        st.caption("Chronological message-passing sequence across presentation, logic, gateway, and persistence tiers.")
+
+        sequence_dot = """
+        digraph SequenceDiagram {
+            graph [rankdir=TB, bgcolor="transparent", pad="0.2", nodesep="0.6", ranksep="0.4"];
+            node [fontname="Helvetica", fontsize=11, fontcolor="#f0f2f6", style="filled", penwidth=1.5];
+            edge [fontname="Helvetica", fontsize=9, fontcolor="#00a8ff", color="#808495", arrowsize=0.75];
+
+            // Entity Lifeline Headers (Top Row)
+            subgraph cluster_header {
+                style=invis;
+                Salesperson [label="Actor: Salesperson", shape=box, fillcolor="#262730", color="#4e5361", width=1.8];
+                OrderSystem [label="Boundary / Controller:\\nOrder System", shape=box, fillcolor="#1e2c38", color="#00a8ff", width=2.0];
+                Gateway     [label="External Service:\\nCredit Card Gateway", shape=box, fillcolor="#3a1c22", color="#ff4b4b", width=2.0];
+                Database    [label="Persistence Tier:\\nPostgreSQL 3NF DB", shape=cylinder, fillcolor="#1e3427", color="#2ecc71", width=2.0];
+            }
+
+            // Lifeline Activation Nodes
+            s1 [shape=point, width=0.01, style=invis];
+            o1 [shape=point, width=0.01, style=invis];
+            g1 [shape=point, width=0.01, style=invis];
+            g2 [shape=point, width=0.01, style=invis];
+            o2 [shape=point, width=0.01, style=invis];
+            d1 [shape=point, width=0.01, style=invis];
+            d2 [shape=point, width=0.01, style=invis];
+            o3 [shape=point, width=0.01, style=invis];
+            s2 [shape=point, width=0.01, style=invis];
+
+            // Vertical Lifelines (Downwards)
+            Salesperson -> s1 [style=dashed, color="#4e5361", arrowhead=none, weight=10];
+            s1 -> s2 [style=dashed, color="#4e5361", arrowhead=none, weight=10];
+
+            OrderSystem -> o1 [style=dashed, color="#00a8ff", arrowhead=none, weight=10];
+            o1 -> o2 [style=dashed, color="#00a8ff", arrowhead=none, weight=10];
+            o2 -> o3 [style=dashed, color="#00a8ff", arrowhead=none, weight=10];
+
+            Gateway -> g1 [style=dashed, color="#ff4b4b", arrowhead=none, weight=10];
+            g1 -> g2 [style=dashed, color="#ff4b4b", arrowhead=none, weight=10];
+
+            Database -> d1 [style=dashed, color="#2ecc71", arrowhead=none, weight=10];
+            d1 -> d2 [style=dashed, color="#2ecc71", arrowhead=none, weight=10];
+
+            // Sequence Invocations (Horizontal Ranks)
+            { rank=same; s1; o1; }
+            s1 -> o1 [label=" 1: submitSale(orderPayload)", color="#00a8ff", fontcolor="#00a8ff", penwidth=1.5];
+
+            { rank=same; o1; g1; }
+            o1 -> g1 [label=" 2: validatePayment(cardToken, total)", color="#ff4b4b", fontcolor="#ff4b4b", penwidth=1.5];
+
+            { rank=same; g2; o2; }
+            g2 -> o2 [label=" 3: return [Approved / Denied]", style=dashed, color="#a0aab2", fontcolor="#a0aab2"];
+
+            { rank=same; o2; d1; }
+            o2 -> d1 [label=" 4: finalizeOrder(salesRecord, status='PAID')", color="#2ecc71", fontcolor="#2ecc71", penwidth=1.5];
+
+            { rank=same; d2; o3; }
+            d2 -> o3 [label=" 5: commitConfirmation(order_id)", style=dashed, color="#a0aab2", fontcolor="#a0aab2"];
+
+            { rank=same; o3; s2; }
+            o3 -> s2 [label=" 6: returnReceipt(invoiceToken)", style=dashed, color="#00a8ff", fontcolor="#00a8ff"];
+        }
+        """
+        st.graphviz_chart(sequence_dot, use_container_width=True)
+
+        st.markdown("""
+        <div style="background-color: var(--secondary-background-color, #1e2530); padding: 16px; border-radius: 8px; border-left: 4px solid #00a8ff; margin-top: 15px;">
+            <strong style="color: #00a8ff;">Key Architectural Characteristics:</strong>
+            <ul style="margin: 6px 0 0 0; padding-left: 20px; font-size: 0.9rem; line-height: 1.5;">
+                <li><strong>Stateless Controller:</strong> The <code>Order System</code> orchestrates payment verification prior to attempting transactional persistence, avoiding dangling or unconfirmed ledger records.</li>
+                <li><strong>Tokenized Gateway Boundary:</strong> Direct raw card details never touch the database; authentication is managed asynchronously via the external payment provider.</li>
+                <li><strong>ACID Transaction Commit:</strong> Step 4 commits order line items, inventory reserve locks, and transaction tokens inside a single atomic database transaction.</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
     with tab_sa4:
         st.header("4. Database Normalization & 3NF Implementation")
@@ -1183,4 +1260,5 @@ elif page == "Reference Guide":
     
     # A professional button to open the app in a new tab
     st.link_button("Launch Full Reference Guide App ↗️", "https://analyst-reference-guide-ntkauffman1.streamlit.app/", type="primary", use_container_width=True)
+
 
