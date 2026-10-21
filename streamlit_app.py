@@ -669,10 +669,10 @@ FROM Movies;
 
 elif page == "ITPM Prioritization Business Case":
     st.title("📋 IT Project Evaluation & Prioritization")
-    st.subheader("Manage Your Health, INC — Executive Business Case[cite: 1]")
+    st.subheader("Manage Your Health, INC — Executive Business Case")
 
     st.markdown("""
-    > **Context:** Executive assessment evaluating four competing IT initiatives to reduce operational costs, modernize infrastructure, and recover capital from an estimated 20% excess in healthcare premiums across 20,000 full-time employees[cite: 1].
+    > **Context:** Executive assessment evaluating four competing IT initiatives to reduce operational costs, modernize infrastructure, and recover capital from an estimated 20% excess in healthcare premiums across 20,000 full-time employees.
     """)
 
     # Executive Summary Metrics
@@ -681,13 +681,13 @@ elif page == "ITPM Prioritization Business Case":
         st.metric(
             label="Top Priority Initiative",
             value="Wellness Intranet",
-            help="Recommended based on fast payback period and immediate cost reduction[cite: 1]."
+            help="Recommended based on fast payback period and immediate cost reduction."
         )
     with col2:
         st.metric(
             label="Projected Annual Savings",
             value="$600,000",
-            delta="Immediate Cost Reduction[cite: 1]"
+            delta="Immediate Cost Reduction"
         )
     with col3:
         st.metric(
@@ -698,7 +698,7 @@ elif page == "ITPM Prioritization Business Case":
         st.metric(
             label="Payback Period",
             value="< 6 Months",
-            delta="Rapid ROI[cite: 1]"
+            delta="Rapid ROI"
         )
 
     st.markdown("---")
@@ -770,56 +770,56 @@ elif page == "ITPM Prioritization Business Case":
 
     with tab_itpm1:
         st.markdown("""
-        * **Employee Base:** 20,000 full-time employees[cite: 1]
-        * **Per-Employee Savings:** $30 / employee / year[cite: 1]
-        * **Gross Annual Savings:** **$600,000 / year**[cite: 1]
-        * **4-Year Cumulative Savings:** **$2,400,000**[cite: 1]
-        * **Implementation Cost:** $200,000[cite: 1]
-        * **Verdict:** **Immediate Priority.** Fully recovers upfront implementation costs within 4 to 5 months of rollout (well before the 6-month deadline)[cite: 1].
+        * **Employee Base:** 20,000 full-time employees
+        * **Per-Employee Savings:** $30 / employee / year
+        * **Gross Annual Savings:** **$600,000 / year**
+        * **4-Year Cumulative Savings:** **$2,400,000**
+        * **Implementation Cost:** $200,000
+        * **Verdict:** **Immediate Priority.** Fully recovers upfront implementation costs within 4 to 5 months of rollout (well before the 6-month deadline).
         """)
 
     with tab_itpm2:
         st.markdown("""
-        * **Employee Base:** 20,000 full-time employees[cite: 1]
-        * **Per-Employee Savings:** $20 / employee / year[cite: 1]
-        * **Gross Annual Savings:** **$400,000 / year**[cite: 1]
-        * **4-Year Cumulative Savings:** **$1,600,000**[cite: 1]
-        * **Implementation Cost:** $100,000[cite: 1]
-        * **Verdict:** High ROI secondary candidate[cite: 1]. Combining this with the Wellness Intranet yields **$1,000,000/yr in recurring operational savings** against an initial combined $300,000 investment[cite: 1].
+        * **Employee Base:** 20,000 full-time employees
+        * **Per-Employee Savings:** $20 / employee / year
+        * **Gross Annual Savings:** **$400,000 / year**
+        * **4-Year Cumulative Savings:** **$1,600,000**
+        * **Implementation Cost:** $100,000
+        * **Verdict:** High ROI secondary candidate. Combining this with the Wellness Intranet yields **$1,000,000/yr in recurring operational savings** against an initial combined $300,000 investment.
         """)
 
     with tab_itpm3:
         st.markdown("""
-        * **Gross Annual Revenue:** $1,000,000[cite: 1]
-        * **Recurring Maintenance / Dev Cost:** $800,000 / year[cite: 1]
-        * **Net Annual Profit:** **$200,000 / year**[cite: 1]
-        * **Verdict:** **Requires Re-evaluation.** High maintenance overhead cuts margins down to 20%[cite: 1]. Recommend negotiating vendor/development costs before committing capital[cite: 1].
+        * **Gross Annual Revenue:** $1,000,000
+        * **Recurring Maintenance / Dev Cost:** $800,000 / year
+        * **Net Annual Profit:** **$200,000 / year**
+        * **Verdict:** **Requires Re-evaluation.** High maintenance overhead cuts margins down to 20%. Recommend negotiating vendor/development costs before committing capital.
         """)
 
     with tab_itpm4:
         st.markdown("""
-        * **Initial Investment:** $3,000,000 (Year 1)[cite: 1]
-        * **Gross Annual Operational Savings:** $2,000,000 / year[cite: 1]
-        * **Annual Maintenance (20%):** $600,000 / year[cite: 1]
-        * **Net Annual Benefit:** **$1,400,000 / year** (starting Year 2)[cite: 1]
-        * **Verdict:** Offers the largest absolute long-term savings, but demands significant upfront capital[cite: 1]. Recommended as a phase-two initiative after short-term savings are secured[cite: 1].
+        * **Initial Investment:** $3,000,000 (Year 1)
+        * **Gross Annual Operational Savings:** $2,000,000 / year
+        * **Annual Maintenance (20%):** $600,000 / year
+        * **Net Annual Benefit:** **$1,400,000 / year** (starting Year 2)
+        * **Verdict:** Offers the largest absolute long-term savings, but demands significant upfront capital. Recommended as a phase-two initiative after short-term savings are secured.
         """)
 
     with st.expander("📌 View Recommendation & Phased Implementation Memo"):
         st.markdown("""
         ### Final Recommendation Memo
-        1. **Phase 1 (Immediate Execution):** Greenlight the **Recreation and Wellness Intranet Project** ($200k cost) and **Health Coverage Business Model** ($100k cost)[cite: 1]. Combined, they yield ~$1,000,000 in immediate recurring annual savings on a modest $300,000 total outlay[cite: 1].
-        2. **Phase 2 (Long-term Infrastructure):** Sequence the **Web-Enhanced Communications System** once early Phase 1 cash flows normalize, offsetting the $3.0M upfront capital requirement[cite: 1].
-        3. **Phase 3 (Scope Reassessment):** Pause the **Cross-Selling System** until maintenance and development overhead can be engineered down to a sustainable operating ratio[cite: 1].
+        1. **Phase 1 (Immediate Execution):** Greenlight the **Recreation and Wellness Intranet Project** ($200k cost) and **Health Coverage Business Model** ($100k cost). Combined, they yield ~$1,000,000 in immediate recurring annual savings on a modest $300,000 total outlay.
+        2. **Phase 2 (Long-term Infrastructure):** Sequence the **Web-Enhanced Communications System** once early Phase 1 cash flows normalize, offsetting the $3.0M upfront capital requirement.
+        3. **Phase 3 (Scope Reassessment):** Pause the **Cross-Selling System** until maintenance and development overhead can be engineered down to a sustainable operating ratio.
         """)
 
 elif page == "Systems Analysis & Architecture":
     st.title("🏗️ Systems Analysis & Cloud Architecture")
-    st.subheader("Mackinac Gnomes Order Management System (OMS)[cite: 20]")
-    st.caption("Authored by Neal Kauffman | Comprehensive Systems Analysis & SDLC Deliverable[cite: 20]")
+    st.subheader("Mackinac Gnomes Order Management System (OMS)")
+    st.caption("Authored by Neal Kauffman | Comprehensive Systems Analysis & SDLC Deliverable")
 
     st.markdown("""
-    > **Executive Summary:** A complete, phased systems analysis transitioning Mackinac Gnomes from a single, error-prone spreadsheet to a secure, cloud-native transactional web portal[cite: 20]. This case study covers stakeholder elicitation, process modeling (DFDs & UML), third-normal-form (3NF) relational design, and a multi-tier AWS VPC architecture[cite: 20].
+    > **Executive Summary:** A complete, phased systems analysis transitioning Mackinac Gnomes from a single, error-prone spreadsheet to a secure, cloud-native transactional web portal. This case study covers stakeholder elicitation, process modeling (DFDs & UML), third-normal-form (3NF) relational design, and a multi-tier AWS VPC architecture.
     """)
 
     col1, col2, col3, col4 = st.columns(4)
@@ -828,9 +828,9 @@ elif page == "Systems Analysis & Architecture":
     with col2:
         st.metric(label="Usage Velocity", value="75%", delta="Accesses ≥ 6x Daily")
     with col3:
-        st.metric(label="Automation Priority", value="50 / 50 Split", help="50% automated shipping labels vs 50% automated sales calculation[cite: 20]")
+        st.metric(label="Automation Priority", value="50 / 50 Split", help="50% automated shipping labels vs 50% automated sales calculation")
     with col4:
-        st.metric(label="Security Posture", value="3-Tier VPC", delta="Subnet Defense in Depth[cite: 20]")
+        st.metric(label="Security Posture", value="3-Tier VPC", delta="Subnet Defense in Depth")
 
     st.markdown("---")
 
@@ -890,7 +890,7 @@ elif page == "Systems Analysis & Architecture":
     with tab_sa1:
         st.header("1. Stakeholder Requirements Gathering & Feedback Analysis")
         st.markdown("""
-        Requirements were gathered from key organizational roles (**Sales**, **Accounting**, and **Creation/Production**) to identify root-cause inefficiencies in the existing order tracking spreadsheet[cite: 20].
+        Requirements were gathered from key organizational roles (**Sales**, **Accounting**, and **Creation/Production**) to identify root-cause inefficiencies in the existing order tracking spreadsheet.
         """)
 
         col_q1, col_q2 = st.columns(2)
@@ -901,7 +901,7 @@ elif page == "Systems Analysis & Architecture":
                 "Respondents": ["25%", "25%", "50%"]
             })
             st.dataframe(df_usage, hide_index=True, use_container_width=True)
-            st.warning("⚠️ **Core Bottleneck:** 75% of users accessed the spreadsheet 6+ times a day, leading to concurrency collisions and overwrites[cite: 20].")
+            st.warning("⚠️ **Core Bottleneck:** 75% of users accessed the spreadsheet 6+ times a day, leading to concurrency collisions and overwrites.")
 
         with col_q2:
             st.subheader("Primary Automation Driver")
@@ -915,15 +915,15 @@ elif page == "Systems Analysis & Architecture":
                 "Preference": ["50%", "50%", "0%", "0%"]
             })
             st.dataframe(df_auto, hide_index=True, use_container_width=True)
-            st.info("💡 **Finding:** User demand was evenly divided between logistics (shipping ticket creation) and finance (automated weekly reporting)[cite: 20].")
+            st.info("💡 **Finding:** User demand was evenly divided between logistics (shipping ticket creation) and finance (automated weekly reporting).")
 
         with st.expander("🔍 View Peer Review & Iterative Survey Enhancements"):
             st.markdown("""
             #### Peer Review Cycle & Survey Refinements
-            * **Xavier Infante:** Validated the necessity of **Refund and Replacement Status fields** to trace damaged and missing product deliveries[cite: 20].
-            * **Ethan Gardner:** Recommended converting fixed single-issue dropdowns into open-ended inputs to prevent constraining feedback[cite: 20]. Resulted in stakeholder requests for **Commission Tracking** and **Refund Macros**[cite: 20].
-            * **Izzy Bledsoe:** Validated deep feature ranking; recommended optional flag criteria for non-applicable workflows[cite: 20].
-            * **Daniel Parker:** Addressed layout consistency and field indentation alignment[cite: 20].
+            * **Xavier Infante:** Validated the necessity of **Refund and Replacement Status fields** to trace damaged and missing product deliveries.
+            * **Ethan Gardner:** Recommended converting fixed single-issue dropdowns into open-ended inputs to prevent constraining feedback. Resulted in stakeholder requests for **Commission Tracking** and **Refund Macros**.
+            * **Izzy Bledsoe:** Validated deep feature ranking; recommended optional flag criteria for non-applicable workflows.
+            * **Daniel Parker:** Addressed layout consistency and field indentation alignment.
             """)
 
     with tab_sa2:
@@ -941,7 +941,7 @@ elif page == "Systems Analysis & Architecture":
       │                │                     │                    │
 [ Customer ]     [ Shipping ]             [ Bank ]          [ Accounting ]
             """, language="text")
-            st.caption("Legacy State: A central spreadsheet acts as a manual bottleneck across all functions[cite: 20].")
+            st.caption("Legacy State: A central spreadsheet acts as a manual bottleneck across all functions.")
 
         with col_dfd_r:
             st.markdown("#### Diagram 0 (Proposed Modular System)")
@@ -958,7 +958,7 @@ elif page == "Systems Analysis & Architecture":
                      ▼                                                   ▼
                [ Shipping ]                                       [ Accounting ]
             """, language="text")
-            st.caption("Target State: Isolated functional modules reading/writing to a centralized data store[cite: 20].")
+            st.caption("Target State: Isolated functional modules reading/writing to a centralized data store.")
 
         st.markdown("---")
         st.markdown("#### Level 1 DFD Explosion Workflows")
@@ -967,18 +967,18 @@ elif page == "Systems Analysis & Architecture":
         with exp_col1:
             st.markdown("**Process 1.0: Log Sale (Explosion)**")
             st.markdown("""
-            1. **1.1 Capture Sales Data:** Receive item, customer, and payment payload[cite: 20].
-            2. **1.2 Validate Payment:** Transmit authorization request to Bank API; evaluate status[cite: 20].
-            3. **1.3 Update Orders Database:** Write confirmed `SALES RECORD` into transactional storage[cite: 20].
-            4. **1.4 Generate Customer Receipt:** Produce transaction confirmation and push receipt to Customer[cite: 20].
+            1. **1.1 Capture Sales Data:** Receive item, customer, and payment payload.
+            2. **1.2 Validate Payment:** Transmit authorization request to Bank API; evaluate status.
+            3. **1.3 Update Orders Database:** Write confirmed `SALES RECORD` into transactional storage.
+            4. **1.4 Generate Customer Receipt:** Produce transaction confirmation and push receipt to Customer.
             """)
 
         with exp_col2:
             st.markdown("**Process 2.0: Ship Product (Explosion)**")
             st.markdown("""
-            1. **2.1 Verify Order Readiness:** Poll `Orders Store` for valid, paid transactions[cite: 20].
-            2. **2.2 Generate Shipping Label:** Query carrier API (USPS/UPS); capture tracking token[cite: 20].
-            3. **2.3 Update Shipping Status:** Mutate database status to `Shipped` and trigger tracking notifications[cite: 20].
+            1. **2.1 Verify Order Readiness:** Poll `Orders Store` for valid, paid transactions.
+            2. **2.2 Generate Shipping Label:** Query carrier API (USPS/UPS); capture tracking token.
+            3. **2.3 Update Shipping Status:** Mutate database status to `Shipped` and trigger tracking notifications.
             """)
 
     with tab_sa3:
@@ -1017,16 +1017,16 @@ Salesperson           Order System              Credit Card Gateway         Data
     with tab_sa4:
         st.header("4. Database Normalization & 3NF Implementation")
         st.markdown("""
-        Decomposed legacy multi-column records into **Third Normal Form (3NF)** in PostgreSQL, decoupling customers, sales reps, line items, and shipping tracking[cite: 20].
+        Decomposed legacy multi-column records into **Third Normal Form (3NF)** in PostgreSQL, decoupling customers, sales reps, line items, and shipping tracking.
         """)
 
         st.markdown("#### Relational Entities & Structural Keys")
         st.markdown("""
-        * **`orders`:** Primary transactional entity (`id` PK, `sale_date`, `location_enum`, `salesperson_id` FK, `status_enum`, `amount_paid`, `notes`)[cite: 20].
-        * **`line_item` & `items`:** Resolves order-to-product cardinality (`line_item` PK/FK bridge tracking `orders_id`, `item_id`, `quantity`)[cite: 20].
-        * **`shipping` & `shipping_method`:** Decoupled carrier metadata (`tracking_id`, `shipping_cost`, `shipping_method` PK)[cite: 20].
-        * **`credit_card_log`:** Auditable, tokenized merchant authorization logs (`cc_validation`, `orders_id` FK)[cite: 20].
-        * **`employee`:** Internal personnel mapping (`id` PK, `name`, `employee_type`)[cite: 20].
+        * **`orders`:** Primary transactional entity (`id` PK, `sale_date`, `location_enum`, `salesperson_id` FK, `status_enum`, `amount_paid`, `notes`).
+        * **`line_item` & `items`:** Resolves order-to-product cardinality (`line_item` PK/FK bridge tracking `orders_id`, `item_id`, `quantity`).
+        * **`shipping` & `shipping_method`:** Decoupled carrier metadata (`tracking_id`, `shipping_cost`, `shipping_method` PK).
+        * **`credit_card_log`:** Auditable, tokenized merchant authorization logs (`cc_validation`, `orders_id` FK).
+        * **`employee`:** Internal personnel mapping (`id` PK, `name`, `employee_type`).
         """)
 
         st.markdown("#### Normalized Analytical View Query")
@@ -1057,26 +1057,26 @@ LEFT JOIN employee e ON e.id = o.salesperson_id;
 
         st.markdown("""
         ### Technical Implementation Memo
-        * **To:** Mackinac Gnomes Steering Committee[cite: 20]
-        * **From:** Neal Kauffman, Systems Analyst[cite: 20]
-        * **Date:** April 30, 2026[cite: 20]
-        * **Subject:** Production System Architecture & Deployment Blueprint[cite: 20]
+        * **To:** Mackinac Gnomes Steering Committee
+        * **From:** Neal Kauffman, Systems Analyst
+        * **Date:** April 30, 2026
+        * **Subject:** Production System Architecture & Deployment Blueprint
         """)
 
         arch_c1, arch_c2 = st.columns(2)
         with arch_c1:
             st.markdown("""
             #### Network Segmentation (Defense in Depth)
-            * **Public Web Subnet:** Ingress through an AWS Application Load Balancer (ALB) enforcing SSL/TLS termination[cite: 20]. Web servers serve UI/mockup assets[cite: 20].
-            * **Private Application Subnet:** API layer housing application logic, processing JSON transactions, and executing third-party API calls[cite: 20].
-            * **Private Data Subnet:** Fully isolated PostgreSQL RDS tier with zero direct public internet ingress, accepting incoming traffic strictly on port 5432 from the Application Subnet[cite: 20].
+            * **Public Web Subnet:** Ingress through an AWS Application Load Balancer (ALB) enforcing SSL/TLS termination. Web servers serve UI/mockup assets.
+            * **Private Application Subnet:** API layer housing application logic, processing JSON transactions, and executing third-party API calls.
+            * **Private Data Subnet:** Fully isolated PostgreSQL RDS tier with zero direct public internet ingress, accepting incoming traffic strictly on port 5432 from the Application Subnet.
             """)
 
         with arch_c2:
             st.markdown("""
             #### Elastic Scalability & Redundancy
-            * **Application Load Balancer:** Automatically distributes traffic bursts during high-volume seasonal demand[cite: 20].
-            * **Decoupled 3rd-Party Integration:** Offloads payment tokenization and dynamic shipping rate calculations to external webhooks, minimizing system state overhead[cite: 20].
+            * **Application Load Balancer:** Automatically distributes traffic bursts during high-volume seasonal demand.
+            * **Decoupled 3rd-Party Integration:** Offloads payment tokenization and dynamic shipping rate calculations to external webhooks, minimizing system state overhead.
             """)
 
     with tab_sa6:
