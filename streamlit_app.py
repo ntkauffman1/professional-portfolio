@@ -1075,7 +1075,8 @@ elif page == "Systems Analysis & Architecture":
 
         sequence_dot = """
         digraph SequenceDiagram {
-            graph [rankdir=TB, bgcolor="transparent", pad="0.2", nodesep="1.2", ranksep="0.5"];
+            // Added splines=polyline to ensure arrows stay perfectly straight
+            graph [rankdir=TB, bgcolor="transparent", pad="0.2", nodesep="1.2", ranksep="0.5", splines=polyline];
             node [fontname="Helvetica", fontsize=11, fontcolor="#f0f2f6", style="filled", penwidth=1.5];
             edge [fontname="Helvetica", fontsize=9, fontcolor="#00a8ff", color="#808495", arrowsize=0.75];
 
@@ -1119,9 +1120,10 @@ elif page == "Systems Analysis & Architecture":
 
             G3 -> O3 [label=" 3: return [Approved / Denied]", style=dashed, color="#a0aab2", fontcolor="#a0aab2"];
 
-            O4 -> D4 [label=" 4: finalizeOrder(salesRecord, status='PAID')", color="#2ecc71", fontcolor="#2ecc71"];
+            // Added newline padding to push text below the crossing lines
+            O4 -> D4 [label="\\n 4: finalizeOrder(salesRecord, status='PAID')", color="#2ecc71", fontcolor="#2ecc71"];
 
-            D5 -> O5 [label=" 5: commitConfirmation(order_id)", style=dashed, color="#a0aab2", fontcolor="#a0aab2"];
+            D5 -> O5 [label="\\n 5: commitConfirmation(order_id)", style=dashed, color="#a0aab2", fontcolor="#a0aab2"];
 
             O6 -> S6 [label=" 6: returnReceipt(invoiceToken)", style=dashed, color="#00a8ff", fontcolor="#00a8ff"];
         }
@@ -1253,5 +1255,4 @@ elif page == "Reference Guide":
     
     # A professional button to open the app in a new tab
     st.link_button("Launch Full Reference Guide App ↗️", "https://analyst-reference-guide-ntkauffman1.streamlit.app/", type="primary", use_container_width=True)
-
 
